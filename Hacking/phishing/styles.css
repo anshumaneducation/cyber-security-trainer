@@ -1,0 +1,89 @@
+/* Styles for the container */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f3f3f3;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+/* Centering and styling the main container */
+.container {
+    text-align: center;
+    background-color: white;
+    padding: 30px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    width: 360px; /* Matches the width of the logo */
+}
+
+/* Styling the Amazon logo */
+.logo {
+    width: 100%;
+    max-width: 360px; /* Matches the container width */
+    height: auto;
+    margin-bottom: 20px;
+    background:white ;
+}
+
+/* Styling the form elements */
+#login-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.input-group {
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+.input-group label {
+    display: block;
+    text-align: left;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.input-group input {
+    width: calc(100% - 20px);
+    padding: 8px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.signin-button {
+    width: 100%;
+    padding: 10px;
+    background-color: #f0c14b;
+    border: 1px solid #a88734;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #111;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.signin-button:hover {
+    background-color: #e2b33f;
+}
+
+/* Styling the forgot password link */
+.forgot-password {
+    margin-top: 15px;
+}
+
+.forgot-password a {
+    color: #0066c0;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.forgot-password a:hover {
+    text-decoration: underline;
+}

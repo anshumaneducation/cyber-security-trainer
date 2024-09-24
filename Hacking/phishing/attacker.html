@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attacker Simulation</title>
+</head>
+<body>
+    <h1>See Data of Amazon Users</h1>
+    <table id="user-data-table" border="1">
+        <thead>
+            <tr>
+                <th>Email</th>
+                <th>Password</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Captured data will be inserted here -->
+        </tbody>
+    </table>
+
+    <script>
+        // Function to load data from Local Storage and display it in the table
+        function loadStoredData() {
+            const storedData = JSON.parse(localStorage.getItem('userData')) || [];
+            const tableBody = document.getElementById('user-data-table').getElementsByTagName('tbody')[0];
+
+            storedData.forEach(data => {
+                const newRow = tableBody.insertRow();
+                const emailCell = newRow.insertCell(0);
+                const passwordCell = newRow.insertCell(1);
+
+                emailCell.textContent = data.email;
+                passwordCell.textContent = data.password;
+            });
+        }
+
+        // Establish WebSocket connection to the server
+        const socket = new WebSocket('ws://localhost:8080');
+
+        // Log WebSocket connection errors
+        socket.onerror = function (error) {
+            console.error('WebSocket Error:', error);
+        };
+
+        // Log WebSocket connection open
+        socket.onopen = function (event) {
+            console.log('WebSocket connection established.');
+        };
+
+        // Handle incoming messages from the server
+        socket.onmessage = function(event) {
+            console.log('Message received from server:', event.data);
+
+            try {
+                const data = JSON.parse(event.data);
+
+                // Insert new data into the table
+                const tableBody = document.getElementById('user-data-table').getElementsByTagName('tbody')[0];
+                const newRow = tableBody.insertRow();
+                const emailCell = newRow.insertCell(0);
+                const passwordCell = newRow.insertCell(1);
+
+                emailCell.textContent = data.email;
+                passwordCell.textContent = data.password;
+
+                // Save the data to Local Storage
+                const storedData = JSON.parse(localStorage.getItem('userData')) || [];
+                storedData.push(data);
+                localStorage.setItem('userData', JSON.stringify(storedData));
+
+                console.log('Data successfully inserted into the table and saved to Local Storage.');
+            } catch (e) {
+                console.error('Error parsing or inserting data:', e);
+            }
+        };
+
+        // Log WebSocket connection closure
+        socket.onclose = function(event) {
+            console.log('WebSocket connection closed.');
+        };
+
+        // Load stored data when the page is loaded
+        window.onload = function() {
+            loadStoredData();
+        };
+    </script>
+</body>
+</html>
