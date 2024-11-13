@@ -38,7 +38,7 @@ def run_server():
     """Server function to handle incoming connections."""
     global connection_count
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_socket.bind(('0.0.0.0', 8080))
+    server_socket.bind(('192.168.100.165', 8080))
     server_socket.listen(5)
     print("Server started on port 8080...")
 
