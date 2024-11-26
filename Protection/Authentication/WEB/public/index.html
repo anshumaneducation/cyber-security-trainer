@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP Check</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        #status {
+            font-size: 1.5em;
+            color: #333;
+        }
+        .allowed {
+            color: green;
+        }
+        .denied {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>IP Address Check</h1>
+    <p id="status">Checking your IP address...</p>
+
+    <script>
+        // Fetch IP check from the server
+        fetch('/check-ip')
+            .then(response => response.json())
+            .then(data => {
+                const statusElement = document.getElementById('status');
+                statusElement.textContent = data.message;
+
+                // Change text color based on access status
+                if (data.success) {
+                    statusElement.classList.add('allowed');
+                } else {
+                    statusElement.classList.add('denied');
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching IP status:', error);
+                document.getElementById('status').textContent = "Error checking IP status.";
+            });
+    </script>
+</body>
+</html>
