@@ -5,7 +5,7 @@ import os
 
 def receive_payload():
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server.bind(('localhost', 5002))  # Listening for Worms
+    server.bind(('0.0.0.0', 5002))  # Listening for Worms
     server.listen(5)
     
     while True:  # Keep accepting connections in a loop

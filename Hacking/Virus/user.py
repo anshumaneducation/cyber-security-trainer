@@ -5,7 +5,7 @@ import os
 
 def receive_payload():
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server.bind(('localhost', 5001))  # Listening for Virus and Trojan
+    server.bind(('0.0.0.0', 5001))  # Listening for Virus and Trojan
     server.listen(1)
     
     while True:
