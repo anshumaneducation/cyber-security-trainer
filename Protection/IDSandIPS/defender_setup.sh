@@ -1,7 +1,7 @@
 #!/bin/bash
 # Defender Script: Starts Snort in IDS or IPS mode and monitors logs.
 
-INTERFACE="eth0"  # Replace with your network interface.
+INTERFACE="inet"  # Replace with your network interface.
 LOG_DIR="/var/log/snort"
 
 echo "Starting Snort in IDS mode on interface: $INTERFACE"
