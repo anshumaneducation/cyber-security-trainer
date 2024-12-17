@@ -11,6 +11,7 @@ import subprocess
 import sign
 import random
 import string
+import psutil
 
 ciphertext = ""
 p = 467
@@ -18,37 +19,17 @@ q = 23
 g = 2
 x = 15
 
+
 # Server setup
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 port = 8080  # Using a higher port number to avoid potential permission issues
 
-server_ip = '192.168.2.130'  # Bind to all interfaces
+server_ip = '0.0.0.0'  # Bind to all interfaces
 server_socket.bind((server_ip, port))
 server_socket.listen(5)
 print(f"Listening on port 8080 {server_ip}")
 clients = []
 
-def send_file():
-    try:
-        with open("signature.txt", "rb") as fi:
-            file_data = fi.read()
-            for client in clients[:]:
-                try:
-                    # Send 'file' header (4 bytes)
-                    client.send(b'file')
-                    # Send filename length (4 bytes) and filename
-                    filename = "signature.txt".encode()
-                    client.send(len(filename).to_bytes(4, 'big'))
-                    client.send(filename)
-                    # Send file data length (4 bytes) and file data
-                    client.send(len(file_data).to_bytes(4, 'big'))
-                    client.send(file_data)
-                except socket.error as e:
-                    print(f"Error sending data to client: {e}")
-                    clients.remove(client)
-        print("File sent successfully")
-    except IOError:
-        print("You entered an invalid filename! Please enter a valid name")
 
 def accept_clients():
     while True:
@@ -69,13 +50,6 @@ accept_thread = threading.Thread(target=accept_clients)
 accept_thread.daemon = True
 accept_thread.start()
 
-# Get the hostname of the local machine
-hostname = socket.gethostname()
-
-# Get the IP address corresponding to the hostname
-ip_address = socket.gethostbyname(hostname)
-
-print(f"IP Address: {ip_address}")
 
 # Function to update the second ComboBox based on the first ComboBox selection
 def update_combo1(event):
@@ -135,16 +109,7 @@ def on_button_click():
     print(f"Ciphertext: {ciphertext}")
     send_to_client()
 
-# Function to select a file
-def select_file():
-    file_path = filedialog.askopenfilename(initialdir="/", title="Select a File")
-    if file_path:
-        file_path_var.set(file_path)  # Update the label or entry with the selected file path
 
-def create_sign():
-    text_get_path=file_path_var.get()
-    sign.sign(text_get_path)
-    send_file()
 
 # Create the main window
 root = tk.Tk()
@@ -155,20 +120,12 @@ root.geometry(f"{screen_width}x{screen_height}")
 root.resizable(False, True)
 
 # Set the title of the window
-ip_text = f"IP: {ip_address}"
 title_text = "Cyber Security Trainer"
 node_text = "Node 1: Sender"
 
-# Calculate lengths of each text
-total_length = 100  # Adjust this value for better alignment
-text_length = len(ip_text) + len(title_text) + len(node_text)
-
-# Calculate spaces for alignment
-left_space = (total_length - text_length) // 2 - len(ip_text) // 2
-right_space = total_length - text_length - left_space
 
 # Create the title string with calculated spaces
-title = f"{ip_text}{' ' * left_space}{title_text}{' ' * right_space}{node_text}"
+title = (f"Cyber Security Sender")
 root.title(title)
 
 # Create a frame for layout purposes
@@ -203,20 +160,6 @@ textarea.config(state=tk.DISABLED)
 # Create a Button
 send_button = ttk.Button(frame, text="Send", command=on_button_click)
 send_button.grid(row=2, column=2, columnspan=2, padx=5, pady=5)
-
-
-# Create a label to show the selected file path
-file_path_var = tk.StringVar()
-file_path_label = ttk.Label(frame, textvariable=file_path_var, anchor='w', relief='sunken', width=50)
-file_path_label.grid(row=4, column=1, padx=5, pady=5, sticky=(tk.W, tk.E))
-
-# Create a button that opens the file selector
-file_button = tk.Button(frame, text="Select File", command=select_file)
-file_button.grid(row=4, column=0, padx=5, pady=5, sticky=tk.W)
-
-# Create a button that Signs the file selector
-sign_btn = tk.Button(frame, text="Create Signature", command=create_sign)
-sign_btn.grid(row=4, column=2, padx=5, pady=5, sticky=tk.W)
 
 
 

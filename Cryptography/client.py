@@ -10,20 +10,14 @@ import hashlib
 import subprocess
 import verification
 import random
+import re  # Added for regex
+client_socket = None
 
 
-# Get the hostname of the local machine
-hostname = socket.gethostname()
-# Get the IP address corresponding to the hostname
-ip_address = socket.gethostbyname(hostname)
-print(f"Hostname: {hostname}")
-print(f"IP Address: {ip_address}")
-
-# Client setup
-client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server_ip = '192.168.2.130'  # Replace with the actual server IP address
-port = 8080
-client_socket.connect((server_ip, port))
+# Function to validate IP address
+def is_valid_ip(ip):
+    pattern = r"^\d{1,3}(\.\d{1,3}){3}$"
+    return re.match(pattern, ip)
 
 
 def received_Messages(ciphertext):
@@ -57,6 +51,7 @@ def received_Messages(ciphertext):
 
     print(f"Identified Algorithm: {identified_algorithm}")
     print(f"Received Key Hash: {received_key_hash}")
+    print(f"Received Key Hash: {hash_RSA}")
     key = "123456789012345678901234"
     md5_key_hash = hashlib.md5(key.encode()).hexdigest()
 
@@ -98,49 +93,24 @@ def receive_messages():
         
 import os
 
-def receive_files():
-    while True:
-        try:
-            # Receive and decode the data type (4 bytes)
-            data_type = client_socket.recv(4).decode().strip()
-            print(f"Received data type: {data_type}")
-            
-            if data_type == 'file':
-                # Receive filename length (4 bytes)
-                filename_length = int.from_bytes(client_socket.recv(4), 'big')
-                # Receive filename
-                filename = client_socket.recv(filename_length).decode().strip()
-                if not filename:
-                    break
 
-                # Prepare to receive the file data
-                with open(filename, 'wb') as fo:
-                    print(f"Receiving file '{filename}' from server")
-                    # Receive file data length (4 bytes)
-                    file_data_length = int.from_bytes(client_socket.recv(4), 'big')
-                    remaining = file_data_length
-                    while remaining > 0:
-                        data = client_socket.recv(min(1024, remaining))
-                        if not data:
-                            break
-                        fo.write(data)
-                        remaining -= len(data)
-                
-                print(f"File '{filename}' received successfully")
-            else:
-                break  # Handle other data types or exit loop
-        except Exception as e:
-            print(f"An error occurred: {e}")
-            break
+def on_button_click_connect():
+    
+    # Client setup
+    global client_socket
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_ip = ip_address_server_entry.get() # Replace with the actual server IP address
 
+    if not is_valid_ip(server_ip):
+        print("Invalid IP address. Please enter a valid one.")
+        return
 
-accept_thread1 = threading.Thread(target=receive_messages)
-accept_thread1.daemon = True
-accept_thread1.start()
+    port = 8080
+    client_socket.connect((server_ip, port))
 
-accept_thread2 = threading.Thread(target=receive_files)
-accept_thread2.daemon = True
-accept_thread2.start()
+    accept_thread1 = threading.Thread(target=receive_messages)
+    accept_thread1.daemon = True
+    accept_thread1.start()
 
 def select_file():
     file_path = filedialog.askopenfilename(initialdir="/", title="Select a File")
@@ -162,7 +132,7 @@ def verify_sign():
 
 # Create the main window
 root = tk.Tk()
-root.title(f"Cyber Security Receiver ip={ip_address}")
+root.title(f"Cyber Security Receiver")
 screen_width = 780
 screen_height = 780
 root.geometry(f"{screen_width}x{screen_height}")
@@ -170,7 +140,21 @@ root.resizable(False, True)
 
 # Create a frame for layout purposes
 frame = ttk.Frame(root, padding="10")
-frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+frame.grid(row=0, column=0, padx=5, pady=5, sticky=tk.W)
+
+##connect to server
+connect_label = ttk.Label(frame, text="Connect to server: ")
+connect_label.grid(row=0, column=0, padx=5, pady=5, sticky=tk.W)
+
+## entrybox for ip address
+ip_address_server_entry = ttk.Entry(frame)
+ip_address_server_entry.grid(row=0, column=1, padx=5, pady=5, sticky=tk.W)
+
+## button for starting connection
+
+# Create a Button
+button = ttk.Button(frame, text="Connect", command=on_button_click_connect)
+button.grid(row=0, column=2, padx=5, pady=5, sticky=tk.W)
 
 # Create a TextArea for received messages
 received_label = ttk.Label(frame, text="Received messages from server:")
