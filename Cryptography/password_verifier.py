@@ -2,21 +2,43 @@ import tkinter as tk
 from tkinter import ttk
 import hashlib
 import subprocess
+import os
 
-encryptor_pass = hashlib.md5(b'12345').hexdigest()
-print(encryptor_pass)
+path_to_keys = "DSAkeys.txt"
 
-decryptor_pass = hashlib.md5(b'54321').hexdigest()
-print(decryptor_pass)
+# Variables for hashed passwords
+encryptor_pass = None
+decryptor_pass = None
+
+# Function to load hashed keys from the file
+def load_keys():
+    global encryptor_pass, decryptor_pass
+    try:
+        with open(path_to_keys, "r") as file:
+            lines = file.readlines()
+            if len(lines) < 2:
+                print("Error: Keys file must have at least two hashed keys.")
+                return False
+            # Extract hashed keys
+            encryptor_pass = lines[0].split(":")[1].strip()
+            decryptor_pass = lines[1].split(":")[1].strip()
+        return True
+    except FileNotFoundError:
+        print(f"Error: Keys file '{path_to_keys}' not found.")
+        return False
+    except Exception as e:
+        print(f"Error loading keys: {e}")
+        return False
 
 def check_Password():
+    load_keys()
     password=textarea.get()
     input_pass = hashlib.md5(password.encode()).hexdigest() 
-    print(input_pass)
-    if(input_pass==encryptor_pass):
+
+    if(input_pass == encryptor_pass):
         subprocess.Popen(['python3', 'digital-signer.py'])
         root.destroy()
-    elif(input_pass==decryptor_pass):
+    elif(input_pass == decryptor_pass):
         subprocess.Popen(['python3', 'digital-verifier.py'])
         root.destroy()
 # Create the main window
