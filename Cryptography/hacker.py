@@ -40,20 +40,25 @@ def receive_messages():
             break
 
 
-# Function to handle server connection
+
 def on_button_click_connect():
     global client_socket
-    server_ip = ip_address_server_entry.get()
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_ip = ip_address_server_entry.get()  # Get the server IP from the entry box
+
     if not is_valid_ip(server_ip):
         print("Invalid IP address. Please enter a valid one.")
         return
 
-    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     port = 8080
     try:
         client_socket.connect((server_ip, port))
         threading.Thread(target=receive_messages, daemon=True).start()
         print("Connected to server!")
+
+        # Change button text to "Connected" and disable it
+        connect_button.config(text="Connected", state=tk.DISABLED)
+
     except Exception as e:
         print(f"Error: {e}")
 
@@ -118,7 +123,7 @@ def on_button_click_decrypt():
         public_key1 = public_key_get
     else:
         type_of = "Asymmetric Encryption"
-        key_pair_1 = (private_key_get, public_key_get)
+        key_pair_1 = (int(private_key_get), int(public_key_get))
 
     print(f"Decryption setup done: {algorithm_selected}, Hash: {hash_algorithm}")
 
@@ -159,35 +164,43 @@ received_textarea.pack(fill=tk.X, padx=10, pady=5)
 step_label2 = ttk.Label(frame, text="Step 2: Detect the encrypting method from the encryption style:")
 step_label2.pack(fill=tk.X, padx=5, pady=5)
 
-combo_label1 = ttk.Label(frame, text="Choose cryptography method:")
-combo_label1.pack(anchor=tk.W, padx=5, pady=5)
 
-combo1 = ttk.Combobox(frame)
+combo_frame = ttk.Frame(frame)
+combo_frame.pack(fill=tk.X, padx=5, pady=5)
+
+combo_label1 = ttk.Label(combo_frame, text="Cryptography Method:")
+combo_label1.pack(side=tk.LEFT, padx=5, pady=5)
+
+combo1 = ttk.Combobox(combo_frame, width=20)
 combo1['values'] = ("Symmetric Encryption", "Asymmetric Encryption")
-combo1.pack(fill=tk.X, padx=10, pady=5)
+combo1.pack(side=tk.LEFT, padx=5)
 combo1.bind("<<ComboboxSelected>>", update_combo2)
 
-combo_label2 = ttk.Label(frame, text="Choose algorithm:")
-combo_label2.pack(anchor=tk.W, padx=5, pady=5)
+combo_label2 = ttk.Label(combo_frame, text="Algorithm:")
+combo_label2.pack(side=tk.LEFT, padx=5, pady=5)
 
-combo2 = ttk.Combobox(frame)
-combo2.pack(fill=tk.X, padx=10, pady=5)
+combo2 = ttk.Combobox(combo_frame, width=20)
+combo2.pack(side=tk.LEFT, padx=5)
+
 
 # Step 3: Get Keys
 step_label3 = ttk.Label(frame, text="Step 3: Get the public and/or private key:")
 step_label3.pack(fill=tk.X, padx=5, pady=5)
 
-public_key_label = ttk.Label(frame, text="Public Key:")
-public_key_label.pack(anchor=tk.W, padx=5, pady=5)
+keys_frame = ttk.Frame(frame)
+keys_frame.pack(fill=tk.X, padx=5, pady=5)
 
-public_key_entry = ttk.Entry(frame)
-public_key_entry.pack(fill=tk.X, padx=10, pady=5)
+public_key_label = ttk.Label(keys_frame, text="Public Key:")
+public_key_label.pack(side=tk.LEFT, padx=5)
 
-private_key_label = ttk.Label(frame, text="Private Key:")
-private_key_label.pack(anchor=tk.W, padx=5, pady=5)
+public_key_entry = ttk.Entry(keys_frame, width=30)
+public_key_entry.pack(side=tk.LEFT, padx=5)
 
-private_key_entry = ttk.Entry(frame)
-private_key_entry.pack(fill=tk.X, padx=10, pady=5)
+private_key_label = ttk.Label(keys_frame, text="Private Key:")
+private_key_label.pack(side=tk.LEFT, padx=5)
+
+private_key_entry = ttk.Entry(keys_frame, width=30)
+private_key_entry.pack(side=tk.LEFT, padx=5)
 
 # Step 4: Decrypt Messages
 step_label4 = ttk.Label(frame, text="Step 4: Get the decrypted messages:")

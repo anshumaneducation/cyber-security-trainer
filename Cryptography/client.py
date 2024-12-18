@@ -95,38 +95,27 @@ import os
 
 
 def on_button_click_connect():
-    
-    # Client setup
     global client_socket
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_ip = ip_address_server_entry.get() # Replace with the actual server IP address
+    server_ip = ip_address_server_entry.get()  # Get the server IP from the entry box
 
     if not is_valid_ip(server_ip):
         print("Invalid IP address. Please enter a valid one.")
         return
 
     port = 8080
-    client_socket.connect((server_ip, port))
+    try:
+        client_socket.connect((server_ip, port))
+        threading.Thread(target=receive_messages, daemon=True).start()
+        print("Connected to server!")
 
-    accept_thread1 = threading.Thread(target=receive_messages)
-    accept_thread1.daemon = True
-    accept_thread1.start()
+        # Change button text to "Connected" and disable it
+        button.config(text="Connected", state=tk.DISABLED)
 
-def select_file():
-    file_path = filedialog.askopenfilename(initialdir="/", title="Select a File")
-    if file_path:
-        file_path_var.set(file_path)  # Update the label or entry with the selected file path
+    except Exception as e:
+        print(f"Error: {e}")
 
 
-def verify_sign():
-    text_get_path = file_path_var.get()
-    # subprocess.Popen(['python3', 'verification.py', text_get_path])
-    is_it_valid=verification.verification(text_get_path)
-    print(is_it_valid)
-    if(is_it_valid):
-        file_path_var1.set("Valid Signature")
-    else:
-        file_path_var1.set("InValid Signature")
 
 
 
@@ -164,23 +153,6 @@ received_textarea = tk.Text(frame, height=10, width=40)
 received_textarea.grid(row=1, column=0, columnspan=2, padx=5, pady=5, sticky=(tk.W, tk.E))
 received_textarea.config(state=tk.DISABLED)
 
-# Create a button that opens the file selector
-file_button = tk.Button(frame, text="Select File", command=select_file)
-file_button.grid(row=2, column=0, padx=5, pady=5, sticky=tk.W)
-
-# Create a label to show the selected file path
-file_path_var = tk.StringVar()
-file_path_label = ttk.Label(frame, textvariable=file_path_var, anchor='w', relief='sunken', width=50)
-file_path_label.grid(row=2, column=1, padx=5, pady=5, sticky=(tk.W, tk.E))
-
-# Create a button that Signs the file selector
-sign_btn = tk.Button(frame, text="Verify Signature", command=verify_sign)
-sign_btn.grid(row=3, column=0, padx=5, pady=5,sticky=tk.W)
-
-# Create a label to show the verified file 
-file_path_var1 = tk.StringVar()
-file_path_label1 = ttk.Label(frame, textvariable=file_path_var1, anchor='w', relief='sunken', width=50)
-file_path_label1.grid(row=3, column=1, padx=5, pady=5, sticky=(tk.W, tk.E))
 
 # Run the main event loop
 root.mainloop()

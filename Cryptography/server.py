@@ -57,7 +57,7 @@ def update_combo1(event):
     if selected_method == "Symmetric Encryption":
         combo2['values'] = ("sDES", "TDES", "RC4")
     elif selected_method == "Asymmetric Encryption":
-        combo2['values'] = ("RSA", "AES")
+        combo2['values'] = ("RSA")
     else:
         combo2['values'] = ()
 
