@@ -27,7 +27,6 @@ port = 8080  # Using a higher port number to avoid potential permission issues
 server_ip = '0.0.0.0'  # Bind to all interfaces
 server_socket.bind((server_ip, port))
 server_socket.listen(5)
-print(f"Listening on port 8080 {server_ip}")
 clients = []
 
 
@@ -35,13 +34,11 @@ def accept_clients():
     while True:
         client_socket, addr = server_socket.accept()
         clients.append(client_socket)
-        print(f"Connection from {addr}")
 
 def send_to_client(event=None):
     for client in clients:
         try:
             client.sendall(ciphertext.encode('utf-8'))
-            print("Sent successfully")
         except:
             clients.remove(client)
 
@@ -79,7 +76,7 @@ def on_button_click():
     type = True
 
     if cryptoType == "Symmetric Encryption":
-        print(public_key)
+        pass
     else:
         type = False
     md5_key_hash = hashlib.md5(public_key.encode()).hexdigest()  # Hash the key
@@ -105,9 +102,18 @@ def on_button_click():
             result = hashlib.md5(b'rc4').hexdigest()
             ciphertext = result + "|" + DSA.RC4(plaintext, public_key1)
 
-
-    print(f"Ciphertext: {ciphertext}")
     send_to_client()
+
+def on_closing():
+    # Close all client sockets
+    for client in clients:
+        client.close()
+
+    # Close the server socket
+    server_socket.close()
+
+    # Terminate the GUI window
+    root.destroy()
 
 
 
@@ -160,6 +166,9 @@ textarea.config(state=tk.DISABLED)
 # Create a Button
 send_button = ttk.Button(frame, text="Send", command=on_button_click)
 send_button.grid(row=2, column=2, columnspan=2, padx=5, pady=5)
+
+# Bind the close event to the on_closing function
+root.protocol("WM_DELETE_WINDOW", on_closing)
 
 
 

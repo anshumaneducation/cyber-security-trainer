@@ -36,7 +36,6 @@ def receive_messages():
             else:
                 break
         except Exception as e:
-            print(f"Connection closed: {e}")
             break
 
 
@@ -54,7 +53,6 @@ def on_button_click_connect():
     try:
         client_socket.connect((server_ip, port))
         threading.Thread(target=receive_messages, daemon=True).start()
-        print("Connected to server!")
 
         # Change button text to "Connected" and disable it
         connect_button.config(text="Connected", state=tk.DISABLED)
@@ -78,7 +76,6 @@ def update_combo2(event):
 def Decrypt_and_show(ciphertext):
     hash_and_message = ciphertext.split('|')
     if len(hash_and_message) != 3:
-        print("Invalid message format")
         return
 
     received_hash = hash_and_message[0]
@@ -90,13 +87,12 @@ def Decrypt_and_show(ciphertext):
 
     try:
         if algorithm == "RC4":
-            plaintext = RC4.rc4_decrypt(encrypted_message, key)
+            plaintext = RC4.RC4(encrypted_message, key)
         elif algorithm == "TDES":
             plaintext = TDES.tdes_decrypt(encrypted_message, key)
         elif algorithm == "SDES":
             plaintext = sDES.sdes_decrypt(encrypted_message, key)
         elif algorithm == "RSA":
-            print(key_pair_1)
             plaintext = RSA.rsa_decrypt(encrypted_message, key_pair_1)
         else:
             plaintext = "Unknown algorithm"
@@ -125,7 +121,6 @@ def on_button_click_decrypt():
         type_of = "Asymmetric Encryption"
         key_pair_1 = (int(private_key_get), int(public_key_get))
 
-    print(f"Decryption setup done: {algorithm_selected}, Hash: {hash_algorithm}")
 
 
 # Main window setup

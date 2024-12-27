@@ -27,13 +27,13 @@ root.title("Key Storage GUI")
 root.geometry("300x200")
 
 # Key 1 label and entry
-key1_label = ttk.Label(root, text="Enter Key 1:")
+key1_label = ttk.Label(root, text="Encryptor Software Key:")
 key1_label.pack(pady=5)
 key1_entry = ttk.Entry(root, width=30)
 key1_entry.pack(pady=5)
 
 # Key 2 label and entry
-key2_label = ttk.Label(root, text="Enter Key 2:")
+key2_label = ttk.Label(root, text="Decryptor Software Key:")
 key2_label.pack(pady=5)
 key2_entry = ttk.Entry(root, width=30)
 key2_entry.pack(pady=5)

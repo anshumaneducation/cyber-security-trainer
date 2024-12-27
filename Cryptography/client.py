@@ -11,6 +11,7 @@ import subprocess
 import verification
 import random
 import re  # Added for regex
+
 client_socket = None
 
 
@@ -26,7 +27,6 @@ def received_Messages(ciphertext):
     received_key_hash = hash_and_message[1]
     encrypted_message = hash_and_message[2]
 
-    print(f"Encrypted text: {encrypted_message}")
 
     # Calculate MD5 hashes for each algorithm
     hash_rc4 = hashlib.md5(b'RC4').hexdigest()
@@ -49,9 +49,7 @@ def received_Messages(ciphertext):
     else:
         identified_algorithm = 'Unknown'
 
-    print(f"Identified Algorithm: {identified_algorithm}")
-    print(f"Received Key Hash: {received_key_hash}")
-    print(f"Received Key Hash: {hash_RSA}")
+
     key = "123456789012345678901234"
     md5_key_hash = hashlib.md5(key.encode()).hexdigest()
 
@@ -71,7 +69,7 @@ def received_Messages(ciphertext):
         plaintext = RSA.rsa_decrypt(encrypted_message, private_key)
     if identified_algorithm == "AES":
         plaintext = TDES.tdes_decrypt(encrypted_message, key)
-    print(f"key: {key} plaintext: {plaintext}")
+
     return plaintext
 
 
@@ -81,7 +79,6 @@ def receive_messages():
             message_received = client_socket.recv(1024).decode('utf-8')
             plaintext = received_Messages(message_received)
             if plaintext:
-                print(f"Server: {plaintext}")  # Print the message to the console
                 received_textarea.config(state=tk.NORMAL)
                 received_textarea.insert(tk.END, f"{plaintext}\n")
                 received_textarea.config(state=tk.DISABLED)
@@ -90,7 +87,8 @@ def receive_messages():
                 break
         except:
             break
-        
+
+
 import os
 
 
@@ -100,23 +98,18 @@ def on_button_click_connect():
     server_ip = ip_address_server_entry.get()  # Get the server IP from the entry box
 
     if not is_valid_ip(server_ip):
-        print("Invalid IP address. Please enter a valid one.")
         return
 
     port = 8080
     try:
         client_socket.connect((server_ip, port))
         threading.Thread(target=receive_messages, daemon=True).start()
-        print("Connected to server!")
 
         # Change button text to "Connected" and disable it
         button.config(text="Connected", state=tk.DISABLED)
 
     except Exception as e:
         print(f"Error: {e}")
-
-
-
 
 
 # Create the main window
@@ -131,28 +124,37 @@ root.resizable(False, True)
 frame = ttk.Frame(root, padding="10")
 frame.grid(row=0, column=0, padx=5, pady=5, sticky=tk.W)
 
-##connect to server
+# Connect to server
 connect_label = ttk.Label(frame, text="Connect to server: ")
 connect_label.grid(row=0, column=0, padx=5, pady=5, sticky=tk.W)
 
-## entrybox for ip address
+# Entry box for IP address
 ip_address_server_entry = ttk.Entry(frame)
 ip_address_server_entry.grid(row=0, column=1, padx=5, pady=5, sticky=tk.W)
 
-## button for starting connection
-
-# Create a Button
+# Button for starting connection
 button = ttk.Button(frame, text="Connect", command=on_button_click_connect)
 button.grid(row=0, column=2, padx=5, pady=5, sticky=tk.W)
 
-# Create a TextArea for received messages
+# Label for received messages
 received_label = ttk.Label(frame, text="Received messages from server:")
-received_label.grid(row=0, column=0, padx=5, pady=5, sticky=tk.W)
+received_label.grid(row=1, column=0, padx=5, pady=5, sticky=tk.W)
 
-received_textarea = tk.Text(frame, height=10, width=40)
-received_textarea.grid(row=1, column=0, columnspan=2, padx=5, pady=5, sticky=(tk.W, tk.E))
+# Create a frame for the TextArea and its scrollbar
+text_frame = ttk.Frame(frame)
+text_frame.grid(row=2, column=0, columnspan=3, padx=5, pady=5, sticky=(tk.W, tk.E))
+
+# Scrollbar
+scrollbar = ttk.Scrollbar(text_frame, orient=tk.VERTICAL)
+scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+# TextArea for received messages
+received_textarea = tk.Text(text_frame, height=10, width=40, yscrollcommand=scrollbar.set)
+received_textarea.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 received_textarea.config(state=tk.DISABLED)
 
+# Configure the scrollbar to work with the TextArea
+scrollbar.config(command=received_textarea.yview)
 
 # Run the main event loop
 root.mainloop()
