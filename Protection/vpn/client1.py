@@ -3,15 +3,30 @@ from cryptography.fernet import Fernet
 import tkinter as tk
 from tkinter import messagebox
 from time import sleep
+import re
 
-# Encryption key
-key = Fernet.generate_key()
+# Load shared encryption key
+with open('key.key', 'rb') as key_file:
+    key = key_file.read()
 cipher = Fernet(key)
+
+def is_valid_ip(ip):
+    """Validate the entered IP address."""
+    pattern = re.compile(r"^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$")
+    if pattern.match(ip):
+        segments = ip.split(".")
+        return all(0 <= int(seg) <= 255 for seg in segments)
+    return False
 
 def send_data():
     message = entry.get()
     if not message:
         messagebox.showerror("Error", "Message cannot be empty!")
+        return
+
+    server_ip = server_ip_entry.get()
+    if not is_valid_ip(server_ip):
+        messagebox.showerror("Error", "Invalid Server IP Address!")
         return
 
     encrypted_data = cipher.encrypt(message.encode())
@@ -22,7 +37,6 @@ def send_data():
     visualize_flow(message, encrypted_data)
 
     try:
-        server_ip = "192.168.1.100"  # Replace with server's IP
         server_port = 12345
 
         client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -49,16 +63,25 @@ def visualize_flow(message, encrypted_data):
 root = tk.Tk()
 root.title("Client 1 - VPN Simulation")
 
+# Entry for Server IP Address
+tk.Label(root, text="Enter Server IP Address:").pack(pady=5)
+server_ip_entry = tk.Entry(root, width=30)
+server_ip_entry.pack(pady=5)
+
+# Entry for Message
 tk.Label(root, text="Enter Message:").pack()
 entry = tk.Entry(root, width=50)
 entry.pack(pady=5)
 
+# Send Button
 send_button = tk.Button(root, text="Send to Server", command=send_data)
 send_button.pack(pady=10)
 
+# Logs
 logs = tk.Listbox(root, width=60, height=10)
 logs.pack(pady=5)
 
+# Visualization Canvas
 canvas = tk.Canvas(root, width=300, height=250, bg="white")
 canvas.pack(pady=10)
 
