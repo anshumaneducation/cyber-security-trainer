@@ -2,6 +2,13 @@ import socket
 import threading
 from tkinter import *
 
+# File path
+file_path = "/etc/encrypted_file.enc"
+
+# Check if the encrypted file exists before opening the app
+if not os.path.exists(file_path):
+    exit()
+
 # List to store received OTPs
 received_otps = []
 

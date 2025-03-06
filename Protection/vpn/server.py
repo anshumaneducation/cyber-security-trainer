@@ -4,6 +4,13 @@ import tkinter as tk
 from time import sleep
 import re
 
+# File path
+file_path = "/etc/encrypted_file.enc"
+
+# Check if the encrypted file exists before opening the app
+if not os.path.exists(file_path):
+    exit()
+
 def is_valid_ip(ip):
     """Validate the entered IP address."""
     pattern = re.compile(r"^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$")

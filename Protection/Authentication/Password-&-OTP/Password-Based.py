@@ -2,6 +2,13 @@ from tkinter import *
 from tkinter import messagebox
 import os
 
+# File path
+file_path = "/etc/encrypted_file.enc"
+
+# Check if the encrypted file exists before opening the app
+if not os.path.exists(file_path):
+    exit()
+
 # File to store credentials
 CREDENTIALS_FILE = "password_based_cach.txt"
 

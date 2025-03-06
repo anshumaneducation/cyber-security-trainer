@@ -5,6 +5,13 @@ from tkinter import messagebox
 from time import sleep
 import re
 
+# File path
+file_path = "/etc/encrypted_file.enc"
+
+# Check if the encrypted file exists before opening the app
+if not os.path.exists(file_path):
+    exit()
+
 # Load shared encryption key
 with open('key.key', 'rb') as key_file:
     key = key_file.read()

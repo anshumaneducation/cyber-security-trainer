@@ -4,6 +4,13 @@ import tkinter as tk
 from threading import Thread
 from time import sleep
 
+# File path
+file_path = "/etc/encrypted_file.enc"
+
+# Check if the encrypted file exists before opening the app
+if not os.path.exists(file_path):
+    exit()
+
 # Load shared encryption key
 with open('key.key', 'rb') as key_file:
     key = key_file.read()

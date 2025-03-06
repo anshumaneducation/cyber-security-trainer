@@ -4,6 +4,13 @@ import random
 import socket
 import threading
 
+# File path
+file_path = "/etc/encrypted_file.enc"
+
+# Check if the encrypted file exists before opening the app
+if not os.path.exists(file_path):
+    exit()
+
 server_ip = None
 port_address = 8080
 client_socket = None

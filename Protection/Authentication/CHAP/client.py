@@ -3,6 +3,13 @@ import hashlib
 import tkinter as tk
 from tkinter import messagebox
 
+# File path
+file_path = "/etc/encrypted_file.enc"
+
+# Check if the encrypted file exists before opening the app
+if not os.path.exists(file_path):
+    exit()
+
 # Shared secret password (same as server)
 shared_secret = "mypassword"
 
