@@ -4,6 +4,13 @@ import socket
 import threading
 import time
 
+# File path
+file_path = "/etc/encrypted_file.enc"
+
+# Check if the encrypted file exists before opening the app
+if not os.path.exists(file_path):
+    exit()
+
 # Global variables
 attack_thread = None
 attack_running = False

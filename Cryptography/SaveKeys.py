@@ -3,23 +3,37 @@ from tkinter import ttk
 import os
 import hashlib
 
-# Path to store the keys
-path_to_keys = "DSAkeys.txt"
+# Path to store the keys (relative to script location)
+path_to_keys =  "DSAkeys.txt"
+# File path for validation
+file_path = "/home/an/CSEH Applications/Executables/Cryptography Apps/encrypted_file.enc"
+
+# Check if the encrypted file exists before opening the app
+if not os.path.exists(file_path):
+    exit()
 
 # Function to save the keys to a file
 def save_keys():
     key1 = key1_entry.get()
     key2 = key2_entry.get()
-    ## hash values of keys
+    
+    # Ensure both keys are provided
+    if not key1 or not key2:
+        status_label.config(text="Please enter both keys.", foreground="red")
+        return
+    
+    # Hash the values of keys
     key1_hash = hashlib.md5(key1.encode()).hexdigest()
     key2_hash = hashlib.md5(key2.encode()).hexdigest()
-    if key1 and key2:
+    
+    # Save the hashed keys to the file
+    try:
         with open(path_to_keys, "w") as file:
             file.write(f"Key 1: {key1_hash}\n")
             file.write(f"Key 2: {key2_hash}\n")
         status_label.config(text="Keys saved successfully!", foreground="green")
-    else:
-        status_label.config(text="Please enter both keys.", foreground="red")
+    except Exception as e:
+        status_label.config(text=f"Error saving keys: {e}", foreground="red")
 
 # Create the main Tkinter window
 root = tk.Tk()

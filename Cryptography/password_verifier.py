@@ -1,9 +1,10 @@
 import tkinter as tk
 from tkinter import ttk
 import hashlib
-import subprocess
 import os
+import importlib
 
+# Path to the keys file (relative path)
 path_to_keys = "DSAkeys.txt"
 
 # Variables for hashed passwords
@@ -30,17 +31,29 @@ def load_keys():
         print(f"Error loading keys: {e}")
         return False
 
-def check_Password():
-    load_keys()
-    password=textarea.get()
-    input_pass = hashlib.md5(password.encode()).hexdigest() 
+# Function to check password and load the appropriate module
+def check_password():
+    if not load_keys():
+        return
+    
+    password = textarea.get()
+    input_pass = hashlib.md5(password.encode()).hexdigest()
+    
+    if input_pass == encryptor_pass:
+        try:
+            import digital_signer
+            print("Digital Signer module loaded successfully.")
+        except ImportError:
+            print("Error: Unable to load 'digital_signer' module.")
+    elif input_pass == decryptor_pass:
+        try:
+            import digital_verifier
+            print("Digital Verifier module loaded successfully.")
+        except ImportError:
+            print("Error: Unable to load 'digital_verifier' module.")
+    else:
+        print("Error: Invalid password.")
 
-    if(input_pass == encryptor_pass):
-        subprocess.Popen(['python3', 'digital-signer.py'])
-        root.destroy()
-    elif(input_pass == decryptor_pass):
-        subprocess.Popen(['python3', 'digital-verifier.py'])
-        root.destroy()
 # Create the main window
 root = tk.Tk()
 
@@ -52,23 +65,19 @@ root.resizable(False, True)
 # Set the title of the window
 title_text = "Cyber Security Trainer"
 node_text = "Input Password to Enter"
-
-
-# Create the title string with calculated spaces
-title = f"{title_text}{'      '}{node_text}"
 root.title(node_text)
 
 # Create a frame for layout purposes
 frame = ttk.Frame(root, padding="10")
 frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
 
-textarea = tk.Entry(frame)
+# Input field for the password
+textarea = tk.Entry(frame, show="*")  # Hide password input
 textarea.grid(row=0, column=0, padx=5, pady=5, sticky=tk.W)
 
-# Create a button that opens the file selector
-pass_button = tk.Button(frame, text="Check", command=check_Password)
+# Create a button that checks the password
+pass_button = tk.Button(frame, text="Check", command=check_password)
 pass_button.grid(row=0, column=1, padx=5, pady=5, sticky=tk.W)
-
 
 # Run the main event loop
 root.mainloop()

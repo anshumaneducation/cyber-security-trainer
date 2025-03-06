@@ -9,6 +9,13 @@ server_running = False
 connection_count = 0
 server_ip='0.0.0.0'
 
+# File path
+file_path = "/etc/encrypted_file.enc"
+
+# Check if the encrypted file exists before opening the app
+if not os.path.exists(file_path):
+    exit()
+
 def log_server_message(message):
     """Log a message to the server's Text widget."""
     text_widget.config(state=tk.NORMAL)
