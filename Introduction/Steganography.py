@@ -2,6 +2,13 @@ import binascii
 from tkinter import Tk, Label, Button, Text, filedialog, messagebox, Canvas, Scrollbar, Frame
 from PIL import Image, ImageTk
 
+# File path
+file_path = "/etc/encrypted_file.enc"
+
+# Check if the encrypted file exists before opening the app
+if not os.path.exists(file_path):
+    exit()
+
 # Function to convert image to hex code
 def image_to_hex(image_path):
     with open(image_path, 'rb') as image_file:
