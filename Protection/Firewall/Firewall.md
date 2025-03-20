@@ -14,17 +14,4 @@
 - VPN Rules
 - Logging Rules
 
-# execution of rules using linux commands examples below:
--
--
--
--
--
--
--
--
--
--
--
--
--
+
